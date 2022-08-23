@@ -8,6 +8,27 @@ locals {
 }
 
 locals {
-  account_id      = var.environment == "development" ? "710196519714" : "918914055277"
-  inline_policies = []
+  account_id = var.environment == "development" ? "710196519714" : "918914055277"
+  inline_policies = [{
+    name = "allow-write-logs"
+    policy = jsonencoded({
+      "Version" : "2012-10-17",
+      "Statement" : [
+        {
+          "Effect" : "Allow",
+          "Resource" : [
+            "arn:aws:logs:${var.aws_region}:${data.aws_caller_identity.current_identity.account_id}:log-group:*",
+            "arn:aws:logs:${var.aws_region}:${data.aws_caller_identity.current_identity.account_id}:log-group:*:*"
+          ],
+          "Action" : [
+            "logs:CreateLogGroup",
+            "logs:CreateLogStream",
+            "logs:PutLogEvents",
+            "logs:DescribeLogGroups",
+            "logs:DescribeLogStreams"
+          ]
+        }
+      ]
+    })
+  }]
 }
