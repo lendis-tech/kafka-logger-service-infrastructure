@@ -11,7 +11,7 @@ locals {
   account_id = var.environment == "development" ? "710196519714" : "918914055277"
   inline_policies = [{
     name = "allow-write-logs"
-    policy = jsonencoded({
+    policy = jsonencode({
       "Version" : "2012-10-17",
       "Statement" : [
         {
