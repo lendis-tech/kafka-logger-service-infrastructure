@@ -46,7 +46,9 @@ RUN find /app -type f -name '*.js' -not -name '*.js.map' -not -path "/app/node_m
 
 RUN rm -rf /app/**/*.js-e
 
-RUN find /app -type f -name '*.js.map' -not -path "/app/node_modules/*" -exec AWS_REGION=${AWS_REGION} AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN} aws s3  mv "{}"  s3://lendis-eks-source-maps/${SERVICE_NAME}/${STAGE}/"{}" \;
+RUN RUN find /app -type f -name '*.js.map' -not -path "/app/node_modules/*" -exec echo "{}" && echo "{}" \;
+
+RUN find /app -type f -name '*.js.map' -not -path "/app/node_modules/*" -exec AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN} aws s3 mv "{}"  s3://lendis-eks-source-maps/${SERVICE_NAME}/${STAGE}/"{}" --region ${AWS_REGION} \;
 
 FROM FROM_IMAGE_NAME
 
