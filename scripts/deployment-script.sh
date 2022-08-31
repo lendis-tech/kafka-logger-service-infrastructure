@@ -51,7 +51,20 @@ build_application() {
     cd ${CODEBUILD_SRC_DIR}
     echo ${DOCKERHUB_PASSWORD} | docker login --username ${DOCKERHUB_USERNAME} --password-stdin
     docker build -t ${ECR_REPO_NAME} . --build-arg NPM_GH_TOKEN=${GH_TOKEN} --build-arg NODE_ENV=${ENVIRONMENT}
+    CONTAINER_WORDIR=$(docker image inspect -f '{{.Config.WorkingDir}}' ${ECR_REPO_NAME})
     aws ecr get-login-password | docker login --username AWS --password-stdin ${ECR_BASE_URL}
+    docker tag ${ECR_REPO_NAME}:latest ${ECR_BASE_URL}/${ECR_REPO_NAME}:${APP_VERSION}
+    docker push ${ECR_BASE_URL}/${ECR_REPO_NAME}:${APP_VERSION}
+
+    cd ${CODEBUILD_SRC_DIR} && cd ../ && cd ./${SERVICE_INFRA_FOLDER_NAME}/docker
+    
+    CREDENTIALS=$(aws sts assume-role --role-arn arn:aws:iam::441772730001:role/upload-eks-source-maps-role --role-session-name codebuild)
+    
+    AWS_ACCESS_KEY_ID=$(echo ${CREDENTIALS} | jq -r '.Credentials.AccessKeyId')
+    AWS_SECRET_ACCESS_KEY=$(echo ${CREDENTIALS} | jq -r '.Credentials.SecretAccessKey')
+    AWS_SESSION_TOKEN=$(echo ${CREDENTIALS} | jq -r '.Credentials.SessionToken')
+
+    docker build -t ${ECR_REPO_NAME} . CONTAINER_WORDIR=${CONTAINER_WORDIR} --build-arg SERVICE_NAME=${SERVICE_REPO_NAME} --build-arg STAGE=${ENVIRONMENT} --build-arg AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} --build-arg AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} --build-arg AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}
     docker tag ${ECR_REPO_NAME}:latest ${ECR_BASE_URL}/${ECR_REPO_NAME}:${APP_VERSION}
     docker push ${ECR_BASE_URL}/${ECR_REPO_NAME}:${APP_VERSION}
 }
@@ -104,14 +117,6 @@ create_service_account() {
     terraform init -backend-config="${ENVIRONMENT}.hcl" -backend=true
     terraform apply -var="aws_region=${AWS_REGION}" -var="environment=${ENVIRONMENT}" -var="eks_cluster_name=${EKS_CLUSTER_NAME}" -var="service_account_name=${SERVICE_REPO_NAME}-${ENVIRONMENT}" -var="service_account_namespace=default" -auto-approve
 }
-
-echo $AWS_REGION
-
-echo $AWS_ACCESS_KEY_ID
-
-echo $AWS_SECRET_ACCESS_KEY
-
-echo $AWS_SESSION_TOKEN
 
 setup
 build_application
