@@ -10,7 +10,7 @@ export STAGE=${6}
 upload_file() {
     FILE=${1}
 
-    RELATIVE_PATH=(echo ${FILE} | sed -r 's#/app/##g')
+    RELATIVE_PATH=$(echo ${FILE} | sed -r 's#/app/##g')
 
     aws s3 mv ${FILE} s3://lendis-eks-source-maps/${SERVICE_NAME}/${STAGE}/${RELATIVE_PATH} --region ${AWS_REGION}
 }
