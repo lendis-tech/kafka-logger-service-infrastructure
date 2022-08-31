@@ -64,6 +64,9 @@ build_application() {
     AWS_SECRET_ACCESS_KEY=$(echo ${CREDENTIALS} | jq -r '.Credentials.SecretAccessKey')
     AWS_SESSION_TOKEN=$(echo ${CREDENTIALS} | jq -r '.Credentials.SessionToken')
 
+    sed -i -e "s#[FROM_IMAGE_NAME]#${ECR_BASE_URL}/${ECR_REPO_NAME}:${APP_VERSION}/#g" Dockerfile
+    rm -rf Dockerfile
+
     docker build -t ${ECR_REPO_NAME} . --build-arg CONTAINER_WORDIR=${CONTAINER_WORDIR} --build-arg SERVICE_NAME=${SERVICE_REPO_NAME} --build-arg STAGE=${ENVIRONMENT} --build-arg AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} --build-arg AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} --build-arg AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}
     docker tag ${ECR_REPO_NAME}:latest ${ECR_BASE_URL}/${ECR_REPO_NAME}:${APP_VERSION}
     docker push ${ECR_BASE_URL}/${ECR_REPO_NAME}:${APP_VERSION}
