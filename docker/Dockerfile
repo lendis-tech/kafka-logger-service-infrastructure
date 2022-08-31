@@ -1,4 +1,4 @@
-FROM [FROM_IMAGE_NAME] as init
+FROM FROM_IMAGE_NAME as init
 
 ARG SERVICE_NAME
 
@@ -64,7 +64,7 @@ RUN aws s3 mv /app s3://lendis-sourcemaps/webapp-fe/staging/ --recursive --exclu
 
 RUN rm -rf /app/**/*.js.map
 
-FROM [FROM_IMAGE_NAME]
+FROM FROM_IMAGE_NAME
 
 ARG CONTAINER_WORDIR
 
