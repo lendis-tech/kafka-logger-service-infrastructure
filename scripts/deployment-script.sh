@@ -105,6 +105,14 @@ create_service_account() {
     terraform apply -var="aws_region=${AWS_REGION}" -var="environment=${ENVIRONMENT}" -var="eks_cluster_name=${EKS_CLUSTER_NAME}" -var="service_account_name=${SERVICE_REPO_NAME}-${ENVIRONMENT}" -var="service_account_namespace=default" -auto-approve
 }
 
+echo $AWS_REGION
+
+echo $AWS_ACCESS_KEY_ID
+
+echo $AWS_SECRET_ACCESS_KEY
+
+echo $AWS_SESSION_TOKEN
+
 setup
 build_application
 create_service_account
