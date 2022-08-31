@@ -48,8 +48,6 @@ RUN rm -rf /app/**/*.js-e
 
 RUN AWS_REGION=${AWS_REGION} AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN} aws s3  mv /app s3://lendis-eks-source-maps/${SERVICE_NAME}/${STAGE}/ --recursive --include "*.js.map" --exclude "*" --exclude "node_modules" --region ${AWS_REGION}
 
-RUN rm -rf /app/**/*.js.map
-
 FROM FROM_IMAGE_NAME
 
 ARG CONTAINER_WORDIR
