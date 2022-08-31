@@ -64,7 +64,7 @@ build_application() {
     AWS_SECRET_ACCESS_KEY=$(echo ${CREDENTIALS} | jq -r '.Credentials.SecretAccessKey')
     AWS_SESSION_TOKEN=$(echo ${CREDENTIALS} | jq -r '.Credentials.SessionToken')
 
-    sed -i -e "s#FROM_IMAGE_NAME#${ECR_BASE_URL}/${ECR_REPO_NAME}:${APP_VERSION}/#g" Dockerfile
+    sed -i -e "s#FROM_IMAGE_NAME#${ECR_BASE_URL}/${ECR_REPO_NAME}:${APP_VERSION}#g" Dockerfile
     rm -rf Dockerfile-e
 
     cat Dockerfile
