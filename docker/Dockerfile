@@ -58,7 +58,7 @@ RUN find /app -type f -name '*.js' -not -name '*.js.map' -not -path "/app/node_m
 
 RUN rm -rf /app/**/*.js-e
 
-RUN aws s3 mv /app s3://lendis-sourcemaps/webapp-fe/staging/ --recursive --exclude "*.js" --exclude "node_modules/*"
+RUN aws s3 mv /app s3://lendis-eks-source-maps/${SERVICE_NAME}/${STAGE}/ --recursive --exclude "*.js" --exclude "node_modules/*"
 
 RUN rm -rf /app/**/*.js.map
 
